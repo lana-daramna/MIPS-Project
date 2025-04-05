@@ -1,4 +1,5 @@
-.data 
+.data
+#Lana Daramna , Aya abdullah
 # User messages and prompts
 prompt:        .asciiz "Enter the filename: "               # Prompt message for filename input
 fin:           .space 100                                   # Space for filename input
@@ -9,7 +10,7 @@ output_file_buffer_2: .space 1024                               # Space for read
 read_input:.space 10
 line:		.space 100
 coff_stored:   .word 0		       #store the value to pass it to coff stored
-system:		.space 1024					#contain three or two equation 
+system:		.space 1024					#contain three or two equation
 index:        .word 0                                       # Variable to track the current position in the buffer
 str:        .space 50               # Space for the resulting string
 
@@ -44,7 +45,7 @@ results_saved_msg: .asciiz "Results saved to file.\n"  # Message when results ar
 X_equal:       .asciiz "X = "                            # Label for displaying X
 Y_equal:       .asciiz "Y = "                            # Label for displaying Y
 Z_equal:       .asciiz "Z = "                            # Label for displaying Z
-Resulat_equal:  .asciiz "result = " 
+Resulat_equal:  .asciiz "result = "
 det_label: .asciiz "Determinants:\n"             # Label for printing "Determinants:"
 det_x_label: .asciiz "det(x): "                  # Label for det(x)
 det_y_label: .asciiz "det(y): "                  # Label for det(y)
@@ -119,13 +120,13 @@ end_remove:
 loop:
     lb $t2, 0($t0)              # Load byte at address $t0 into $t2
     blez $t2, end_loop          # If byte value is less than or equal to EOF (0), exit loop
-    
+
     # Increment the buffer pointer
     addi $t0, $t0, 1            # Increment buffer pointer by 1
     # Check for empty line
     li $t3, '\n'                  # ASCII value for newline character ('\n')
     beq $t2, $t3, check_next_char # If current char is '\n', check next char
-    
+
     sb $t2, 0($t9)         # Store the byte in $t2 into 'line' at the address in $t9
     addi $t9, $t9, 1       # Increment $t9 to point to the next position in the line
     # Add a condition here if you need to stop after a certain count or a specific byte value
@@ -135,7 +136,7 @@ loop:
     beq $t2, $t3, increment_equl    # If current char is '=', increment equal counter
 
 back_from_incremant_equal:
-    
+
     j loop                      # Jump to the start of the loop
 ####################################################################################################
 end_loop:
@@ -272,7 +273,7 @@ decode_loop:
     #$$$$$$$$#
     sb $t7, 0($t1)         # Store the current byte into 'coff_stored'
     addi $t1, $t1, 1       # Move to the next byte in 'coff_stored'
-    
+
     ###################################################################################
     beq  $t7, '=', constant_mode        # if '=', jump to constant handling mode
     #%%%%%%%%%%%%%%%%%%%%%%%%#
@@ -280,15 +281,15 @@ decode_loop:
     beq  $t7, 'y', y_coff           # if 'y', handle y coefficient
     beq  $t7, 'z', z_coff           # if 'z', handle z coefficient
     #%%%%%%%%%%%%%%%%%%%%%%%%#
-    
+
     ###################################################################################
-    j decode_loop             
+    j decode_loop
 ##########################<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 x_coff:
     #////////////
     li $t4, 1            # Initialize $t4 for handling negative numbers
     li $t1, 0            # Initialize $t1 for storing the parsed number
-    la $t8,coff_stored  
+    la $t8,coff_stored
 loop_x_store:
     lb $t7, 0($t8)          # Load the next character
     beq $t7, 'x', end_loop_x_coff # Exit if 'x' is reached
@@ -305,7 +306,7 @@ loop_x_store:
 end_loop_x_coff:
     beq $t1, $zero, coff_x_equla_one  # If $t1 == 0, jump to the label coff_1
     back_from_coff_x_equla_one:
-    
+
     mul $t1, $t1, $t4        # Apply the sign (positive/negative)
     move $t2, $t1            # Store the final value in $t2
     move $t3, $t6            # Copy the value of $t6 into $t3
@@ -332,13 +333,13 @@ coff_x_equla_one:
     li $t1,1
     j back_from_coff_x_equla_one
 ##########
-    
+
 ##<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>##
 y_coff:
     #////////////
     li $t4, 1            # Initialize $t4 for handling negative numbers
     li $t1, 0            # Initialize $t1 for storing the parsed number=
-    la $t8,coff_stored  
+    la $t8,coff_stored
 loop_y_store:
     lb $t7, 0($t8)          # Load the next character
     beq $t7, 'y', end_loop_y_coff # Exit if 'y' is reached
@@ -383,7 +384,7 @@ z_coff:
     #////////////
     li $t4, 1            # Initialize $t4 for handling negative numbers
     li $t1, 0            # Initialize $t1 for storing the parsed number=
-    la $t8,coff_stored  
+    la $t8,coff_stored
 loop_z_store:
     lb $t7, 0($t8)          # Load the next character
     beq $t7, 'z', end_loop_z_coff # Exit if 'z' is reached
@@ -487,7 +488,7 @@ clear_loop_line:
     li $t7, 0	#equal counter back to 0
     la $t9, line    #pointer of line space to 0
     j loop
-   
+
 ####################################################################################################
 empty_line:
     addi $t6,$t6,1
@@ -497,7 +498,7 @@ empty_line:
     ##################
     #t6 contain the number of line in system #numof equation
     addi $t0, $t0, 2            # Increment buffer pointer by 1
-    
+
     #################
     # Print the entire line without a loop
     li $v0, 4                  # syscall code for print_string
@@ -512,7 +513,7 @@ unvalied_line_2:
     la $a0, error_msg_unvalid
     syscall
     j exit
-back_decode_bf: 
+back_decode_bf:
 
     #################
 # Print the 'result' array in order
@@ -589,7 +590,7 @@ end_print_coff_x:
     # Print a newline after the array
     li $a0, 10              # ASCII value of '\n'
     li $v0, 11              # System call for print character
-    syscall   
+    syscall
     ##########print y_coff###############
  # Print the 'coff_y' array in order
     li $v0, 4
@@ -625,7 +626,7 @@ end_print_coff_y:
     # Print a newline after the array
     li $a0, 10              # ASCII value of '\n'
     li $v0, 11              # System call for print character
-    syscall   
+    syscall
 ##########print z_coff###############
  # Print the 'coff_z' array in order
     li $v0, 4
@@ -661,13 +662,13 @@ end_print_coff_z:
     # Print a newline after the array
     li $a0, 10              # ASCII value of '\n'
     li $v0, 11              # System call for print character
-    syscall   
+    syscall
     ##################
     li $a0, 10       # ASCII code for newline (\n)
     li $v0, 11       # Syscall code for printing a character
     syscall          # Execute the syscall to print \n
     ###############		here we decode the line		######################################
-    
+
     li $t3, 2             # Load the value 2 into $t0
     beq $t6, $t3, solve_system_with_two_Variable # If $t6 == 2, jump to solve_system_with_two_Variable
     li $t3, 3             # Load the value 2 into $t0
@@ -690,7 +691,7 @@ end_print_coff_z:
     jal  clear_memory     # Clear result
     #########################end decode last line and solve the systme#########################3
     li $t6, 0  # Set $t6 to 0 t6 contain the number of line in each system
-    li $t7,0 #set t7 to 0 to cheack number of equal in 
+    li $t7,0 #set t7 to 0 to cheack number of equal in
      li $v0, 4
     la $a0, bloack	  #print block between the systems
     syscall
@@ -763,7 +764,7 @@ decode_loop_bf:
     #$$$$$$$$#
     sb $t7, 0($t1)         # Store the current byte into 'coff_stored'
     addi $t1, $t1, 1       # Move to the next byte in 'coff_stored'
-    
+
     ###################################################################################
     beq  $t7, '=', constant_mode_bf        # if '=', jump to constant handling mode
     #%%%%%%%%%%%%%%%%%%%%%%%%#
@@ -771,7 +772,7 @@ decode_loop_bf:
     beq  $t7, 'y', y_coff_bf           # if 'y', handle y coefficient
     beq  $t7, 'z', z_coff_bf           # if 'z', handle z coefficient
     #%%%%%%%%%%%%%%%%%%%%%%%%#
-    
+
     ###################################################################################
     j decode_loop_bf              # Continue looping
 ##########################<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -779,7 +780,7 @@ x_coff_bf:
     #////////////
     li $t4, 1            # Initialize $t4 for handling negative numbers
     li $t1, 0            # Initialize $t1 for storing the parsed number
-    la $t8, coff_stored  
+    la $t8, coff_stored
 loop_x_store_bf:
     lb $t7, 0($t8)          # Load the next character
     beq $t7, 'x', end_loop_x_coff_bf # Exit if 'x' is reached
@@ -796,7 +797,7 @@ loop_x_store_bf:
 end_loop_x_coff_bf:
     beq $t1, $zero, coff_x_equla_one_bf  # If $t1 == 0, jump to the label coff_1
     back_from_coff_x_equla_one_bf:
-    
+
     mul $t1, $t1, $t4        # Apply the sign (positive/negative)
     move $t2, $t1            # Store the final value in $t2
     move $t3, $t6            # Copy the value of $t6 into $t3
@@ -825,13 +826,13 @@ coff_x_equla_one_bf:
     li $t1, 1
     j back_from_coff_x_equla_one_bf
 ##########
-    
+
 ##<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>##
 y_coff_bf:
     #////////////
     li $t4, 1            # Initialize $t4 for handling negative numbers
     li $t1, 0            # Initialize $t1 for storing the parsed number
-    la $t8, coff_stored  
+    la $t8, coff_stored
 loop_y_store_bf:
     lb $t7, 0($t8)          # Load the next character
     beq $t7, 'y', end_loop_y_coff_bf # Exit if 'y' is reached
@@ -879,7 +880,7 @@ z_coff_bf:
     #////////////
     li $t4, 1            # Initialize $t4 for handling negative numbers
     li $t1, 0            # Initialize $t1 for storing the parsed number
-    la $t8, coff_stored  
+    la $t8, coff_stored
 loop_z_store_bf:
     lb $t7, 0($t8)          # Load the next character
     beq $t7, 'z', end_loop_z_coff_bf # Exit if 'z' is reached
@@ -998,8 +999,8 @@ solve_system_with_two_Variable:
     # Calculate det(A)
     lw $s4, 0($s0)   # a11
     lw $s5, 4($s1)   # a22
-    mul $t7, $s4, $s5  # t7 = a22 * a11    
-    
+    mul $t7, $s4, $s5  # t7 = a22 * a11
+
     lw $s4, 0($s1)   # a12
     lw $s5, 4($s0)   # a21
     mul $t5, $s4, $s5  # t5 = a12 * a21
@@ -1022,7 +1023,7 @@ solve_system_with_two_Variable:
     cvt.s.w $f0, $f0    # Convert det(x) to float
     cvt.s.w $f1, $f1    # Convert det(A) to float
     div.s $f2, $f0, $f1 # f2 = det(x) / det(A)
-    jal Reverse_function 
+    jal Reverse_function
      #+++++++++++++++++++++++++++++++++++++#
     # Step 1: Open file for reading to check if it exists
     li $v0, 13                # Syscall for open
@@ -1050,28 +1051,28 @@ solve_system_with_two_Variable:
     syscall
      li $v0, 13                # Syscall for open
     la $a0, output_filename          # File name
-    li $a1, 1                 # Open for writing 
+    li $a1, 1                 # Open for writing
     syscall
     move $t1, $v0             # Save file descriptor
-    
+
     # Step 4: Write the existing content (from buffer) back to the file
     li $v0, 15                # Syscall for write
     move $a0, $t1             # File descriptor
     la $a1, outout_file_buffer          # Address of the buffer (previous file content)
     move $a2, $t8             # Number of bytes read (from previous syscall)
     syscall
-    
+
      # Step 6: Write the converted string to the file
       li $v0, 15                # Syscall for write
     move $a0, $t1             # File descriptor
     la $a1,X_equal         # Address of the x_lAabel
     li $a2, 3             # Length of the empty line
     syscall                   # Perform the write
-   
+
     li $v0, 15          # Syscall for write
     move $a0, $t1       # File descriptor
     la $a1, str            # Address of the string to write
-    li $a2, 9            # Length of the string 
+    li $a2, 9            # Length of the string
     syscall             # Perform the write syscall
     # Step 5: Write an empty line to separate previous content from new content
     li $v0, 15                # Syscall for write
@@ -1079,13 +1080,13 @@ solve_system_with_two_Variable:
     la $a1, emptyLine         # Address of the empty line string
     li $a2, 1                 # Length of the empty line
     syscall                   # Perform the write
-   
+
     # Close the file after reading
     li $v0, 16                # Syscall for close
     move $a0, $t1             # File descriptor
     syscall
     #+++++++++++++++++++++++++++++++++++++#
-    
+
     # ========== Calculate det(y) ==========
     lw $t7, 0($s0)       # a11
     lw $t5, 4($s3)       # d2
@@ -1129,28 +1130,28 @@ solve_system_with_two_Variable:
     syscall
      li $v0, 13                # Syscall for open
     la $a0, output_filename          # File name
-    li $a1, 1                 # Open for writing 
+    li $a1, 1                 # Open for writing
     syscall
     move $t1, $v0             # Save file descriptor
-    
+
     # Step 4: Write the existing content (from buffer) back to the file
     li $v0, 15                # Syscall for write
     move $a0, $t1             # File descriptor
     la $a1, outout_file_buffer          # Address of the buffer (previous file content)
     move $a2, $t8             # Number of bytes read (from previous syscall)
     syscall
-    
+
      # Step 6: Write the converted string to the file
       li $v0, 15                # Syscall for write
     move $a0, $t1             # File descriptor
     la $a1,Y_equal         # Address of the x_lAabel
     li $a2, 3             # Length of the empty line
     syscall                   # Perform the write
-   
+
     li $v0, 15          # Syscall for write
     move $a0, $t1       # File descriptor
     la $a1, str            # Address of the string to write
-    li $a2, 9            # Length of the string 
+    li $a2, 9            # Length of the string
     syscall             # Perform the write syscall
     # Step 5: Write an empty line to separate previous content from new content
     li $v0, 15                # Syscall for write
@@ -1158,13 +1159,13 @@ solve_system_with_two_Variable:
     la $a1, emptyLine         # Address of the empty line string
     li $a2, 1                 # Length of the empty line
     syscall                   # Perform the write
-   
+
     # Close the file after reading
     li $v0, 16                # Syscall for close
     move $a0, $t1             # File descriptor
     syscall
-    #+++++++++++++++++++++++++++++++++++++# 
-    
+    #+++++++++++++++++++++++++++++++++++++#
+
    j back_from_solve
 
 infinity_solutions:
@@ -1186,9 +1187,9 @@ solve_system_with_three_Variable:
     la $s1, coff_y  # Base address of coff_y
     la $s2, coff_z  # Base address of coff_z
     la $s3, result  # Base address of result
-    
 
-    
+
+
     # Calculate det(A)
     lw $s4, 4($s1)   # a22
     lw $s5, 8($s2)   # a33
@@ -1278,7 +1279,7 @@ solve_system_with_three_Variable:
     cvt.s.w $f0, $f0    # Convert det(x) to float
     cvt.s.w $f1, $f1    # Convert det(A) to float
     div.s $f2, $f0, $f1 # f2 = det(x) / det(A)
-    jal Reverse_function 
+    jal Reverse_function
     #+++++++++++++++++++++++++++++++++++++#
     # Step 1: Open file for reading to check if it exists
     li $v0, 13                # Syscall for open
@@ -1305,28 +1306,28 @@ solve_system_with_three_Variable:
     syscall
      li $v0, 13                # Syscall for open
     la $a0, output_filename          # File name
-    li $a1, 1                 # Open for writing 
+    li $a1, 1                 # Open for writing
     syscall
     move $t1, $v0             # Save file descriptor
-    
+
     # Step 4: Write the existing content (from buffer) back to the file
     li $v0, 15                # Syscall for write
     move $a0, $t1             # File descriptor
     la $a1, outout_file_buffer          # Address of the buffer (previous file content)
     move $a2, $t8             # Number of bytes read (from previous syscall)
     syscall
-    
+
      # Step 6: Write the converted string to the file
       li $v0, 15                # Syscall for write
     move $a0, $t1             # File descriptor
     la $a1,X_equal         # Address of the x_lAabel
     li $a2, 3             # Length of the empty line
     syscall                   # Perform the write
-   
+
     li $v0, 15          # Syscall for write
     move $a0, $t1       # File descriptor
     la $a1, str            # Address of the string to write
-    li $a2, 9            # Length of the string 
+    li $a2, 9            # Length of the string
     syscall             # Perform the write syscall
     # Step 5: Write an empty line to separate previous content from new content
     li $v0, 15                # Syscall for write
@@ -1334,13 +1335,13 @@ solve_system_with_three_Variable:
     la $a1, emptyLine         # Address of the empty line string
     li $a2, 1                 # Length of the empty line
     syscall                   # Perform the write
-   
+
     # Close the file after reading
     li $v0, 16                # Syscall for close
     move $a0, $t1             # File descriptor
     syscall
     #+++++++++++++++++++++++++++++++++++++#
-    
+
       # ========== Calculate det(y) ==========
 
     # First term of det(y)
@@ -1391,7 +1392,7 @@ solve_system_with_three_Variable:
     cvt.s.w $f1, $f1    # Convert det(A) to float
 
     div.s $f2, $f0, $f1 # f2 = det(y) / det(A)
-    jal Reverse_function 
+    jal Reverse_function
      #+++++++++++++++++++++++++++++++++++++#
     # Step 1: Open file for reading to check if it exists
     li $v0, 13                # Syscall for open
@@ -1418,10 +1419,10 @@ solve_system_with_three_Variable:
     syscall
      li $v0, 13                # Syscall for open
     la $a0, output_filename          # File name
-    li $a1, 1                 # Open for writing 
+    li $a1, 1                 # Open for writing
     syscall
     move $t1, $v0             # Save file descriptor
-    
+
     # Step 4: Write the existing content (from buffer) back to the file
     li $v0, 15                # Syscall for write
     move $a0, $t1             # File descriptor
@@ -1434,11 +1435,11 @@ solve_system_with_three_Variable:
     la $a1,Y_equal         # Address of the x_lAabel
     li $a2, 3             # Length of the empty line
     syscall                   # Perform the write
-   
+
     li $v0, 15          # Syscall for write
     move $a0, $t1       # File descriptor
     la $a1, str            # Address of the string to write
-    li $a2, 9            # Length of the string 
+    li $a2, 9            # Length of the string
     syscall             # Perform the write syscall
     # Step 5: Write an empty line to separate previous content from new content
     li $v0, 15                # Syscall for write
@@ -1446,7 +1447,7 @@ solve_system_with_three_Variable:
     la $a1, emptyLine         # Address of the empty line string
     li $a2, 1                 # Length of the empty line
     syscall                   # Perform the write
-   
+
     # Close the file after reading
     li $v0, 16                # Syscall for close
     move $a0, $t1             # File descriptor
@@ -1509,7 +1510,7 @@ cvt.s.w $f1, $f1    # Convert det(A) to float
 
 # Perform the division: Z = det(z) / det(A)
 div.s $f2, $f0, $f1 # f2 = det(z) / det(A)
-jal Reverse_function 
+jal Reverse_function
  #+++++++++++++++++++++++++++++++++++++#
     # Step 1: Open file for reading to check if it exists
     li $v0, 13                # Syscall for open
@@ -1536,10 +1537,10 @@ jal Reverse_function
     syscall
      li $v0, 13                # Syscall for open
     la $a0, output_filename          # File name
-    li $a1, 1                 # Open for writing 
+    li $a1, 1                 # Open for writing
     syscall
     move $t1, $v0             # Save file descriptor
-    
+
     # Step 4: Write the existing content (from buffer) back to the file
     li $v0, 15                # Syscall for write
     move $a0, $t1             # File descriptor
@@ -1585,11 +1586,11 @@ copy_loop_2:
     la $a1,Z_equal         # Address of the x_lAabel
     li $a2, 3             # Length of the empty line
     syscall                   # Perform the write
-   
+
     li $v0, 15          # Syscall for write
     move $a0, $t1       # File descriptor
     la $a1, str            # Address of the string to write
-    li $a2, 9            # Length of the string 
+    li $a2, 9            # Length of the string
     syscall             # Perform the write syscall
     # Step 5: Write an empty line to separate previous content from new content
     li $v0, 15                # Syscall for write
@@ -1597,14 +1598,14 @@ copy_loop_2:
     la $a1, emptyLine         # Address of the empty line string
     li $a2, 1                 # Length of the empty line
     syscall                   # Perform the write
-   
+
     # Close the file after reading
     li $v0, 16                # Syscall for close
     move $a0, $t1             # File descriptor
     syscall
     #+++++++++++++++++++++++++++++++++++++#
 j back_from_solve
-    
+
 infinity_solutions_2:
     # Print "there are infinity solutions"
     la $a0, message       # Load address of message string
@@ -1614,7 +1615,7 @@ infinity_solutions_2:
     # Optionally, you can stop the program here by exiting.
     li $v0, 10            # Exit syscall
     syscall
-    
+
     file_error_2_:
     li $v0, 4
     la $a0, error_message  # Error message
@@ -1739,4 +1740,4 @@ reverse_fraction_done:
 no_fraction:
     sb      $zero, 0($a2)            # Null-terminate the string
   jr $ra
-####################################################################################  
+####################################################################################
